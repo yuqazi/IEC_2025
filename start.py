@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from gui import create_window, random_code#, create_botwindow
+from gui import create_window, random_code, create_botwindow
 
 
 class SliderApp:
@@ -80,7 +80,7 @@ class SliderApp:
         bot_value = self.bot_enabled.get()
         if bot_value:
             print("Bot function is enabled.")
-            #create_botwindow(self.precomputed_code, count)
+            create_botwindow(self.precomputed_code, count)
         else:
             create_window(self.precomputed_code, count)
 
