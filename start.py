@@ -28,7 +28,7 @@ class SliderApp:
         self.slider = tk.Scale(
             master,
             from_=0,
-            to=20,
+            to=10,
             resolution=1,
             orient='horizontal',
             length=300,
