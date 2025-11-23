@@ -1,12 +1,11 @@
-final = 97
+final = 12342198
+final_guesses = []
 iteration = 0
 digits = [int(d) for d in str(final)]
 
 lows = [0] * len(digits)
 highs = [9] * len(digits)
 guesses = [(low + high) // 2 for low, high in zip(lows, highs)]
-
-print(guesses)
 
 while guesses != digits:
     iteration += 1
@@ -23,7 +22,6 @@ while guesses != digits:
 
         guesses[i] = (lows[i] + highs[i]) // 2
 
-    print("Guesses so far:", guesses)
+    final_guesses += guesses
 
-
-print("\nFINAL RESULT:", guesses)
+print("\nFINAL RESULT:", final_guesses)
