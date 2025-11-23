@@ -1,31 +1,32 @@
 import tkinter as tk
 import guess as g
 
-root = tk.Tk()
-root.title("Mastermind Tkinter Window")
-root.configure(bg="#111111")
-
 label_style = {"bg": "#111111", "fg": "white", "font": ("Arial", 10)}
 entry_style = {"width": 5}
 
 rounds = 0
 
 
+import tkinter as tk
+import guess as g
+
+label_style = {"bg": "#111111", "fg": "white", "font": ("Arial", 10)}
+entry_style = {"width": 5}
+
+rounds = 0
+
 def create_window(correct_code, num_digits):
-    global rounds
+    global rounds, canvas, scroll_frame, scroll_window
     rounds = 0
 
-     # Clear existing widgets instead of making a new Tk
-    for widget in root.winfo_children():
-        widget.destroy()
-        
-    label_style = {"bg": "#111111", "fg": "white", "font": ("Arial", 10)}
-    entry_style = {"width": 5}
+    # Create NEW window properly
+    win = tk.Toplevel()
+    win.title("Mastermind Tkinter Window")
+    win.configure(bg="#111111")
+    win.geometry("450x500")
 
-    root.geometry("450x500")
-
-    # --- TOP STATIC AREA (does NOT expand) ---
-    top_frame = tk.Frame(root, bg="#111111")
+    # --- TOP STATIC AREA ---
+    top_frame = tk.Frame(win, bg="#111111")
     top_frame.pack(side="top", fill="x")
 
     tk.Label(top_frame, text="Mastermind Game",
@@ -39,7 +40,7 @@ def create_window(correct_code, num_digits):
     input_row = tk.Frame(top_frame, bg="#111111")
     input_row.pack(pady=5)
 
-    entries = []  # store entry widgets
+    entries = []
 
     for i in range(1, num_digits + 1):
         cell = tk.Frame(input_row, bg="#111111")
@@ -54,11 +55,10 @@ def create_window(correct_code, num_digits):
     submit_button = tk.Button(top_frame, text="Submit")
     submit_button.pack(pady=10)
 
-    # --- SCROLL AREA (expands FULL HEIGHT) ---
-    scroll_container = tk.Frame(root, bg="#111111")
+    # --- SCROLL AREA ---
+    scroll_container = tk.Frame(win, bg="#111111")
     scroll_container.pack(side="top", fill="both", expand=True)
 
-    global canvas
     canvas = tk.Canvas(scroll_container, bg="#111111", highlightthickness=0)
     canvas.pack(side="left", fill="both", expand=True)
 
@@ -67,19 +67,13 @@ def create_window(correct_code, num_digits):
 
     canvas.configure(yscrollcommand=scrollbar.set)
 
-    global scroll_frame
     scroll_frame = tk.Frame(canvas, bg="#111111")
-
-    global scroll_window
     scroll_window = canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
 
     scroll_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+    canvas.bind("<Configure>", lambda e: canvas.itemconfig(scroll_window, width=e.width))
 
-    def resize_scroll_frame(event):
-        canvas.itemconfig(scroll_window, width=event.width)
-
-    canvas.bind("<Configure>", resize_scroll_frame)
-
+    # --- SUBMIT LOGIC ---
     def on_submit():
         global rounds
         guess = "".join(e.get() for e in entries)
@@ -94,12 +88,11 @@ def create_window(correct_code, num_digits):
             ).pack(pady=10)
             submit_button.config(state="disabled")
             for e in entries:
-                e.config(state="disabled")  # Disable all entries
+                e.config(state="disabled")
         else:
             rounds += 1
             addGuess(guess, scroll_frame, score, rounds)
 
-            # Clear the entry boxes after each guess
             for e in entries:
                 e.delete(0, tk.END)
 
@@ -112,7 +105,7 @@ def create_window(correct_code, num_digits):
             ).pack(pady=10)
             submit_button.config(state="disabled")
             for e in entries:
-                e.config(state="disabled")  # Disable all entries
+                e.config(state="disabled")
 
     submit_button.config(command=on_submit)
 
