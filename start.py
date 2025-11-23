@@ -1,28 +1,30 @@
 import tkinter as tk
 from tkinter import ttk
-from gui import create_window
-from gui import random_code
+from gui import create_window, random_code#, create_botwindow
+
 
 class SliderApp:
     """
-    A simple Tkinter application demonstrating a Scale widget (slider),
-    a Label that displays the slider's current value, and a Submit button
-    that calls a function from another file.
+    Tkinter App with:
+    - A slider (0–20)
+    - Label showing slider value
+    - A checkbox to choose bot function on/off
+    - Submit button that calls create_window() in gui.py
+    - Precomputes random_code() during slider movement
     """
     def __init__(self, master):
         self.master = master
         master.title("Integer Slider (0 to 20) Example")
-        master.geometry("400x250")
+        master.geometry("400x300")
         master.resizable(False, False)
 
-        # Variable to hold the slider's current value
-        self.slider_value = tk.DoubleVar()
-        self.slider_value.set(10.0)  # Start in the middle
+        # Holds live slider value
+        self.slider_value = tk.IntVar(value=10)
 
-        # Stores the result of running random_code() early
+        # Store precomputed random_code() result
         self.precomputed_code = None
 
-        # Slider
+        # Slider widget
         self.slider = tk.Scale(
             master,
             from_=0,
@@ -35,7 +37,7 @@ class SliderApp:
         )
         self.slider.pack(pady=20)
 
-        # Label to show current value
+        # Label showing current value
         self.label_text = tk.StringVar()
         self.value_label = ttk.Label(
             master,
@@ -43,6 +45,15 @@ class SliderApp:
             font=('Arial', 14, 'bold')
         )
         self.value_label.pack(pady=10)
+
+        # Checkbox for enabling bot
+        self.bot_enabled = tk.BooleanVar(value=False)
+        self.bot_checkbox = ttk.Checkbutton(
+            master,
+            text="Enable Bot Function",
+            variable=self.bot_enabled
+        )
+        self.bot_checkbox.pack(pady=5)
 
         # Submit button
         self.submit_button = ttk.Button(
@@ -52,31 +63,29 @@ class SliderApp:
         )
         self.submit_button.pack(pady=15)
 
-        # Initialize label text & pre-run code
+        # Initialize
         self.on_slider_change(self.slider_value.get())
 
     def on_slider_change(self, value):
-        """Runs BEFORE create_window — executed every time the slider moves."""
-        try:
-            int_value = int(float(value))
-            self.label_text.set(f"Selected Count: {int_value}")
+        """Updates label and precomputes random_code() for faster Submit."""
+        int_value = int(float(value))
+        self.label_text.set(f"Selected Count: {int_value}")
 
-            # Pre-run the function using current slider value
-            self.precomputed_code = random_code(int_value)
-
-        except ValueError:
-            self.label_text.set("Error")
-            self.precomputed_code = None
+        # Pre-run the external function so Submit is instant
+        self.precomputed_code = random_code(int_value)
 
     def submit_value(self):
-        """Calls create_window but uses the already precomputed code."""
-        current_value = int(self.slider_value.get())
+        """Calls create_window() in gui.py using the precomputed result."""
+        count = self.slider_value.get()
+        bot_value = self.bot_enabled.get()
+        if bot_value:
+            print("Bot function is enabled.")
+            #create_botwindow(self.precomputed_code, count)
+        else:
+            create_window(self.precomputed_code, count)
 
-        # Use the precomputed version instead of running random_code here
-        create_window(self.precomputed_code, current_value)
 
-
-# Main execution
+# Only run the GUI if executed directly
 if __name__ == "__main__":
     root = tk.Tk()
     app = SliderApp(root)
