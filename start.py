@@ -14,7 +14,7 @@ class SliderApp:
     """
     def __init__(self, master):
         self.master = master
-        master.title("Integer Slider (0 to 20) Example")
+        master.title("Integer Slider (0 to 10)")
         master.geometry("400x300")
         master.resizable(False, False)
 

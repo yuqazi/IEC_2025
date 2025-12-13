@@ -1,6 +1,6 @@
 import tkinter as tk
 import guess as g
-from bot import bot_guessing_game
+import bot as bt
 
 label_style = {"bg": "#111111", "fg": "white", "font": ("Arial", 10)}
 entry_style = {"width": 5}
@@ -212,7 +212,12 @@ def create_botwindow(correct_code, num_digits):
         entries.append(entry)
 
     # Bot guesses
-    bot_guess = bot_guessing_game(correct_code)
+    # Explicit conversion to integers
+    bot_guess = bt.bot_guessing_game([int(s) for s in correct_code])
+    
+    # Explicit conversion back to strings
+    bot_guess_str = ["".join([str(num) for num in round_guess]) for round_guess in bot_guess]
+    print ("Bot Guess: ", bot_guess_str, "\n")
 
     submit_button = tk.Button(top_frame, text="Submit")
     submit_button.pack(pady=10)
@@ -254,8 +259,9 @@ def create_botwindow(correct_code, num_digits):
         else:
             rounds += 1
             addGuess(guess, scroll_frame, score, rounds)
-            addbotGuess(bot_guess[rounds-1], scroll_frame, score, rounds)
-            if bot_guess[rounds-1] == correct_code:
+            addbotGuess(bot_guess_str[rounds-1], scroll_frame, score, rounds)
+            
+            if bot_guess_str[rounds-1] == correct_code:
                 tk.Label(
                     top_frame,
                     text="Bot has guessed the code!",
